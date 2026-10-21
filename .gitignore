@@ -1,0 +1,25 @@
+# Blender backup and autosave files
+*.blend1
+*.blend2
+*.blend@
+
+# Big intermediate meshes from AI generation (keep only optimized web model in git)
+models/*.obj
+models/*.ply
+models/*.zip
+
+# Python / notebooks
+__pycache__/
+.ipynb_checkpoints/
+
+# Node
+node_modules/
+
+# OS junk
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Retailer's original photos: keep local only, don't publish
+photos/raw/*
+!photos/raw/.gitkeep
