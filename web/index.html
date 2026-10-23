@@ -99,6 +99,13 @@
     .specs div { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
     .specs span:first-child { color: var(--muted); }
     .desc { font-size: 15px; line-height: 1.6; color: #333; margin-top: 28px; }
+    .about {
+      max-width: 1200px; margin: 0 auto; padding: 32px 16px 48px;
+      border-top: 1px solid var(--line); font-size: 15px; line-height: 1.6; color: #333;
+    }
+    .about h2 { font-weight: 400; font-size: 20px; margin: 0 0 12px; color: var(--ink); }
+    .about ul { padding-left: 20px; margin: 12px 0; }
+    .about li { margin-bottom: 6px; }
     footer { text-align: center; font-size: 12px; color: var(--muted); padding: 24px 16px 40px; border-top: 1px solid var(--line); }
   </style>
 </head>
@@ -167,6 +174,26 @@
       </p>
     </section>
   </main>
+
+  <section class="about">
+    <h2>About this demo</h2>
+    <p>
+      This 3D model was made from <strong>one product photo</strong> using only free AI tools
+      and open-source software (total cost €0). It shows the experience, not the final quality.
+    </p>
+    <ul>
+      <li><strong>Strap:</strong> the shape, fabric texture and clasp are approximated. One photo
+        doesn't show enough of the strap, so the AI had to guess most of it.</li>
+      <li><strong>Back and caseback:</strong> not visible in the photo, so they are simplified.</li>
+      <li><strong>Dial:</strong> a sharp flat photo, so the hands and sub-dials have no real depth.</li>
+      <li><strong>Case details:</strong> lugs, crown and pushers are close but not exact.</li>
+    </ul>
+    <p>
+      <strong>How it can be much better:</strong> paid 3D tools, or the brand's own 3D files,
+      combined with proper studio photos of each watch (a 360° turntable series plus close-ups
+      of the dial, caseback and strap) would give an accurate model that looks right from every angle.
+    </p>
+  </section>
 
   <footer>Concept demo by Moiz · 3D model generated from a single product photo</footer>
 
