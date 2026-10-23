@@ -1,40 +1,44 @@
-# Find the bezel circle (centre + radius in pixels) in the front photo, and save a
-# check image with the circle drawn on it.
+# Find the bezel circle (centre + radius in pixels) in the front dial photo, and save a
+# check image with the circle drawn on it. Copy the printed numbers into make_dial_texture.py.
 # Run: python scripts\find_bezel.py
-import os, numpy as np
+import os, math, numpy as np
 from PIL import Image, ImageDraw
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-src = os.path.join(ROOT, "photos", "clean", "front-4x.png")
-img = Image.open(src).convert("RGBA")
-a = np.asarray(img).astype(float)
-h, w = a.shape[:2]
-lum = a[..., :3].mean(axis=2)
-dark = (lum < 60) & (a[..., 3] > 128)
+src = os.path.join(ROOT, "photos", "clean", "dial-front-4x.png")
+img = Image.open(src).convert("RGB")
+lum = np.asarray(img).astype(float).mean(axis=2)
+h, w = lum.shape
 
-# rough centre: the middle of the dark area in the middle rows
-rows = range(int(h * 0.35), int(h * 0.55))
-pts = []
-for y in rows:
-    xs = np.where(dark[y])[0]
-    if len(xs) < 10:
-        continue
-    pts.append((xs[0], y)); pts.append((xs[-1], y))
-pts = np.array(pts, float)
+def bright(x, y):
+    return 0 <= x < w and 0 <= y < h and lum[y, x] > 100
 
-# least-squares circle fit: x^2 + y^2 + D x + E y + F = 0
-A = np.c_[pts[:, 0], pts[:, 1], np.ones(len(pts))]
-b = -(pts[:, 0] ** 2 + pts[:, 1] ** 2)
-D, E, F = np.linalg.lstsq(A, b, rcond=None)[0]
-cx, cy = -D / 2, -E / 2
-r = np.sqrt(cx ** 2 + cy ** 2 - F)
+# Start from a rough guess, then repeat: walk outward from the centre at many angles until
+# the black bezel turns into bright steel (bright for 8 px, so white numerals are skipped),
+# and fit a circle through those edge points.
+cx, cy = w / 2, h / 2
+for _ in range(4):
+    pts = []
+    for deg in range(0, 360, 2):
+        t = math.radians(deg)
+        for r in range(int(h * 0.38), int(h * 0.58)):
+            x, y = int(cx + r * math.cos(t)), int(cy + r * math.sin(t))
+            if not (0 <= x < w and 0 <= y < h):
+                break
+            if lum[y, x] > 120 and all(bright(int(cx + (r + k) * math.cos(t)),
+                                              int(cy + (r + k) * math.sin(t))) for k in range(1, 8)):
+                pts.append((x, y, r))
+                break
+    P = np.array(pts, float)
+    P = P[np.abs(P[:, 2] - np.median(P[:, 2])) < 25]          # drop crowns / stray hits
+    A = np.c_[P[:, 0], P[:, 1], np.ones(len(P))]
+    D, E, F = np.linalg.lstsq(A, -(P[:, 0] ** 2 + P[:, 1] ** 2), rcond=None)[0]
+    cx, cy = -D / 2, -E / 2
+    r = math.sqrt(cx ** 2 + cy ** 2 - F)
 print(f"image {w}x{h}  bezel centre=({cx:.0f},{cy:.0f})  radius={r:.0f}px")
 
-chk = img.copy()
-d = ImageDraw.Draw(chk)
-d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=(255, 0, 0, 255), width=6)
-d.line([cx - 30, cy, cx + 30, cy], fill=(255, 0, 0, 255), width=6)
-d.line([cx, cy - 30, cx, cy + 30], fill=(255, 0, 0, 255), width=6)
+d = ImageDraw.Draw(img)
+d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=(255, 0, 0), width=4)
 out = os.path.join(ROOT, "blender", "previews", "bezel-check.png")
-chk.convert("RGB").resize((w // 3, h // 3)).save(out)
+img.resize((w // 2, h // 2)).save(out)
 print("check image:", out)

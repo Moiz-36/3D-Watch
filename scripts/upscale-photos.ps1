@@ -16,6 +16,7 @@ New-Item -ItemType Directory -Force $out | Out-Null
 
 Get-ChildItem $raw -Filter *.png | ForEach-Object {
     $dest = Join-Path $out ($_.BaseName + "-4x.png")
+    if (Test-Path $dest) { Write-Host "Skip $($_.Name) (already upscaled)"; return }
     Write-Host "Upscaling $($_.Name) -> $(Split-Path $dest -Leaf)"
     # realesrgan-x4plus = general photo model (the "anime" models are for drawings)
     & $exe -i $_.FullName -o $dest -n realesrgan-x4plus -s 4 -f png
