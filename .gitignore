@@ -41,3 +41,7 @@ photos/clean/*
 blender/*.blend
 models/watch-raw.glb
 models/watch-opt.glb
+
+# Private notes: local only
+pitch-notes.md
+CLAUDE.md
