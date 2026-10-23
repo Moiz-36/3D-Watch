@@ -14,7 +14,11 @@
       --bg: #ffffff;
       --soft: #f6f5f2;
       --accent: #1a1a1a;
+      --wrap: min(94vw, 78rem);
     }
+    /* Everything is sized in rem, and the root size grows with the screen,
+       so the page keeps the same proportions from phones to 4K monitors. */
+    html { font-size: clamp(15px, 0.6vw + 6px, 32px); }
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -22,63 +26,72 @@
       color: var(--ink);
       background: var(--bg);
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
     /* ---------- header ---------- */
     .demo-bar {
-      background: var(--ink); color: #fff; font-size: 12px; letter-spacing: .04em;
-      text-align: center; padding: 8px 16px;
+      background: var(--ink); color: #fff; font-size: .75rem; letter-spacing: .04em;
+      text-align: center; padding: .5rem 1rem;
     }
     header {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 18px 16px; border-bottom: 1px solid var(--line);
-      max-width: 1200px; margin: 0 auto;
+      padding: 1.1rem 1rem; border-bottom: 1px solid var(--line);
+      width: var(--wrap); margin: 0 auto;
     }
-    .logo { font-size: 18px; letter-spacing: .3em; text-transform: uppercase; }
-    nav { display: flex; gap: 24px; font-size: 13px; color: var(--muted); }
+    .logo { font-size: 1.1rem; letter-spacing: .3em; text-transform: uppercase; }
+    nav { display: flex; gap: 1.5rem; font-size: .8rem; color: var(--muted); }
     @media (max-width: 640px) { nav { display: none; } }
 
     /* ---------- product layout ---------- */
     main {
-      max-width: 1200px; margin: 0 auto; padding: 24px 16px 64px;
-      display: grid; grid-template-columns: 1.15fr 1fr; gap: 48px;
+      width: var(--wrap); margin: 0 auto; padding: 1.5rem 1rem 4rem;
+      display: grid; grid-template-columns: 1.15fr 1fr; gap: 3rem;
     }
-    @media (max-width: 860px) { main { grid-template-columns: 1fr; gap: 24px; } }
-    .crumbs { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+    @media (max-width: 860px) {
+      main { grid-template-columns: 1fr; gap: 1.5rem; width: 100%; }
+      header { width: 100%; }
+    }
+    .crumbs { grid-column: 1 / -1; font-size: .75rem; color: var(--muted); }
 
     /* ---------- gallery: 2D photo first, 3D on request ---------- */
-    .gallery { position: relative; background: var(--soft); aspect-ratio: 1 / 1; overflow: hidden; }
+    .gallery {
+      position: relative; background: var(--soft); aspect-ratio: 1 / 1;
+      max-height: 85vh; width: 100%; overflow: hidden;
+    }
     model-viewer {
       width: 100%; height: 100%;
       --poster-color: var(--soft);
       background: var(--soft);
     }
     .view-3d {
-      position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%);
-      display: inline-flex; align-items: center; gap: 10px;
+      position: absolute; left: 50%; bottom: 1.25rem; transform: translateX(-50%);
+      display: inline-flex; align-items: center; gap: .6rem;
       background: #fff; color: var(--ink); border: 1px solid var(--ink);
-      padding: 12px 22px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
-      cursor: pointer; transition: background .2s, color .2s;
+      padding: .75rem 1.4rem; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase;
+      cursor: pointer; transition: background .2s, color .2s; white-space: nowrap;
     }
     .view-3d:hover { background: var(--ink); color: #fff; }
-    .view-3d svg { width: 18px; height: 18px; }
+    .view-3d svg { width: 1.1rem; height: 1.1rem; }
     .hint {
-      position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
-      font-size: 12px; color: var(--muted); background: rgba(255,255,255,.85);
-      padding: 6px 12px; pointer-events: none; opacity: 0; transition: opacity .4s;
+      position: absolute; top: 1rem; left: 50%; transform: translateX(-50%);
+      font-size: .75rem; color: var(--muted); background: rgba(255,255,255,.85);
+      padding: .4rem .75rem; pointer-events: none; opacity: 0; transition: opacity .4s;
+      white-space: nowrap;
     }
     .gallery.is-3d .hint { opacity: 1; }
     .back-2d {
-      position: absolute; top: 12px; right: 12px; display: none;
-      background: #fff; border: 1px solid var(--line); padding: 8px 12px;
-      font-size: 12px; cursor: pointer;
+      position: absolute; top: .75rem; right: .75rem; display: none;
+      background: #fff; border: 1px solid var(--line); padding: .5rem .75rem;
+      font-size: .75rem; cursor: pointer;
     }
     .gallery.is-3d .back-2d { display: block; }
     .gallery.is-3d .view-3d { display: none; }
     .ar-btn {
-      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-      background: var(--ink); color: #fff; border: 0; padding: 12px 22px;
-      font-size: 13px; letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+      position: absolute; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
+      background: var(--ink); color: #fff; border: 0; padding: .75rem 1.4rem;
+      font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+      white-space: nowrap;
     }
     .progress {
       position: absolute; left: 0; bottom: 0; height: 2px; background: var(--ink);
@@ -86,27 +99,29 @@
     }
 
     /* ---------- product info ---------- */
-    .brand { font-size: 13px; letter-spacing: .25em; text-transform: uppercase; color: var(--muted); margin: 0; }
-    h1 { font-weight: 400; font-size: 30px; line-height: 1.2; margin: 8px 0 4px; }
-    .ref { font-size: 13px; color: var(--muted); margin: 0 0 24px; }
-    .price { font-size: 22px; margin: 0 0 24px; }
+    .brand { font-size: .8rem; letter-spacing: .25em; text-transform: uppercase; color: var(--muted); margin: 0; }
+    h1 { font-weight: 400; font-size: 1.9rem; line-height: 1.2; margin: .5rem 0 .25rem; }
+    .ref { font-size: .8rem; color: var(--muted); margin: 0 0 1.5rem; }
+    .price { font-size: 1.4rem; margin: 0 0 1.5rem; }
     .cta {
       display: block; width: 100%; background: var(--accent); color: #fff; border: 0;
-      padding: 16px; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer;
+      padding: 1rem; font-size: .9rem; letter-spacing: .1em; text-transform: uppercase; cursor: pointer;
     }
-    .cta.secondary { background: #fff; color: var(--ink); border: 1px solid var(--ink); margin-top: 10px; }
-    .specs { margin-top: 32px; border-top: 1px solid var(--line); }
-    .specs div { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+    .cta.secondary { background: #fff; color: var(--ink); border: 1px solid var(--ink); margin-top: .6rem; }
+    .specs { margin-top: 2rem; border-top: 1px solid var(--line); }
+    .specs div { display: flex; justify-content: space-between; gap: 1rem; padding: .75rem 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
     .specs span:first-child { color: var(--muted); }
-    .desc { font-size: 15px; line-height: 1.6; color: #333; margin-top: 28px; }
+    .specs span:last-child { text-align: right; }
+    .desc { font-size: .95rem; line-height: 1.6; color: #333; margin-top: 1.75rem; }
     .about {
-      max-width: 1200px; margin: 0 auto; padding: 32px 16px 48px;
-      border-top: 1px solid var(--line); font-size: 15px; line-height: 1.6; color: #333;
+      width: var(--wrap); margin: 0 auto; padding: 2rem 1rem 3rem;
+      border-top: 1px solid var(--line); font-size: .95rem; line-height: 1.6; color: #333;
     }
-    .about h2 { font-weight: 400; font-size: 20px; margin: 0 0 12px; color: var(--ink); }
-    .about ul { padding-left: 20px; margin: 12px 0; }
-    .about li { margin-bottom: 6px; }
-    footer { text-align: center; font-size: 12px; color: var(--muted); padding: 24px 16px 40px; border-top: 1px solid var(--line); }
+    @media (max-width: 860px) { .about { width: 100%; } }
+    .about h2 { font-weight: 400; font-size: 1.25rem; margin: 0 0 .75rem; color: var(--ink); }
+    .about ul { padding-left: 1.25rem; margin: .75rem 0; }
+    .about li { margin-bottom: .4rem; }
+    footer { text-align: center; font-size: .75rem; color: var(--muted); padding: 1.5rem 1rem 2.5rem; border-top: 1px solid var(--line); }
   </style>
 </head>
 <body>
